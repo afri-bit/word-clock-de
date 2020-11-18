@@ -60,7 +60,7 @@ private:
     Color colorActiveWord_{255, 255, 255};
     Color colorInactiveWord_{0, 0, 0};
     Color colorAmPm_{255, 0, 0};
-    Color colorSecond_{0, 255, 0};
+    Color colorSecond_{240, 145, 20};
     Color colorMinutePrecision_{255, 0, 255};
 
     ClockMode clockMode_ = FORMAL;
