@@ -28,6 +28,8 @@ DS1302 rtc(kCePin, kIoPin, kSclkPin);
 
 WordClock myWordClock{leds, 124};
 
+
+
 /**
  * @brief This function sets up the ledsand tells the controller about them
  * 
@@ -50,10 +52,10 @@ void setup()
 
     // Make a new time object to set the date and time.
     // Sunday, September 22, 2013 at 01:38:50.
-    //Time t(2014, 10, 6, 12, 57, 50, Time::kMonday);
+    // Time t(2020, 11, 18, 22, 40, 00, Time::kTuesday);
 
     // Set the time and date on the chip.
-    //rtc.time(t);
+    // rtc.time(t);
 }
 
 /**
@@ -92,5 +94,6 @@ void loop()
     
     FastLED.show();
 
-    delay(10);
+
+    delay(100);
 }
