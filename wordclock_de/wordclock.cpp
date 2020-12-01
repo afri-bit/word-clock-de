@@ -20,8 +20,7 @@ void WordClock::turnOffLED(uint8_t ledNumber)
     leds_[ledNumber].setRGB(0, 0, 0);
 }
 
-// Create a function to turn on LEDs from to
-void WordClock::turnOnLEDFromTo(uint8_t from, uint8_t to, const Color &color)
+void WordClock::turnOnLED(uint8_t from, uint8_t to, const Color &color)
 {
     for (uint8_t i = from; i <= to; i++)
     {
@@ -29,8 +28,7 @@ void WordClock::turnOnLEDFromTo(uint8_t from, uint8_t to, const Color &color)
     }
 }
 
-// TODO: Create a function to turn off LEDs from to
-void WordClock::turnOffLEDFromTo(uint8_t from, uint8_t to)
+void WordClock::turnOffLED(uint8_t from, uint8_t to)
 {
     for (uint8_t i = from; i <= to; i++)
     {
@@ -38,48 +36,53 @@ void WordClock::turnOffLEDFromTo(uint8_t from, uint8_t to)
     }
 }
 
-// TODO: Create a function to turn off all LEDs
 void WordClock::turnOffAllLEDs()
 {
-    turnOffLEDFromTo(0, numLEDs_ - 1);
+    turnOffLED(0, numLEDs_ - 1);
 }
 
-void WordClock::setClock(uint8_t hour, uint8_t minute, uint8_t second)
+void WordClock::setTime(uint8_t hour, uint8_t minute, uint8_t second)
 {
+    // Turn off all LEDs
+    turnOffAllLEDs();
+
     // Save the state to internal variables
     clockHour_ = hour; // We are using 24 hours time format
     clockMinute_ = minute;
     clockSecond_ = second;
 
-    // Get the meridiem (AM or PM)
-    if (hour >= 12)
+    if (showClock_)
     {
-        clockMeridiem_ = PM;
-        setPm();
-    }
-    else 
-    {
-        clockMeridiem_ = AM;
-        setAm();
+        // Get the meridiem (AM or PM)
+        if (hour >= 12)
+        {
+            setPm();
+        }
+        else
+        {
+            setAm();
+        }
+
+        if ((clockMinute_ >= 25) || (clockMode_ == INFORMAL && clockMinute_ >= 15 && clockMinute_ < 20))
+        {
+            setHour((clockHour_ % 12) + 1);
+        }
+        else
+        {
+            setHour(clockHour_ % 12);
+        }
+
+        setMinute(minute);
+        setMinutePrecision(minute);
+        setSecond(second);
+        setWordItIs();
+        if (clockMinute_ < 5)
+        {
+            setWordOclock();
+        }
     }
 
-    if ((clockMinute_ >= 25) || (clockMode_ == INFORMAL && clockMinute_ >= 15 && clockMinute_ < 20))
-    {
-        setHour((clockHour_ % 12) + 1);
-    }
-    else
-    {
-        setHour(clockHour_ % 12);
-    }
-    
-    setMinute(minute);
-    setMinutePrecision(minute);
-    setSecond(second);
-    setWordItIs();
-    if (clockMinute_ < 5)
-    {
-        setWordOclock();
-    }
+    FastLED.show();
 }
 
 void WordClock::setHour(uint8_t hour)
@@ -154,7 +157,6 @@ void WordClock::setHour(uint8_t hour)
     }
 }
 
-// TODO: Algorithm for Minutes
 /*
  * ----------------------------------------------------------------------------
  *  Possible Times:
@@ -241,7 +243,7 @@ void WordClock::setSecond(uint8_t second)
     // Get the second in 10s interval
     // Using modulo the second will be defined from 0-10
     uint8_t secondInterval = second % 10;
-    turnOffLEDFromTo(110, 119);
+    turnOffLED(110, 119);
 
     switch (secondInterval)
     {
@@ -304,50 +306,50 @@ void WordClock::setSecond(uint8_t second)
 void WordClock::setAm()
 {
     // Turn Off PM
-    turnOffLEDFromTo(70, 71);
+    turnOffLED(70, 71);
 
     // Turn On AM
-    turnOnLEDFromTo(59, 60, colorAmPm_);
+    turnOnLED(59, 60, colorAmPm_);
 }
 
 void WordClock::setPm()
 {
     // Turn Off AM
-    turnOffLEDFromTo(59, 60);
+    turnOffLED(59, 60);
 
     // Turn On PM
-    turnOnLEDFromTo(70, 71, colorAmPm_);
+    turnOnLED(70, 71, colorAmPm_);
 }
 
 void WordClock:: setBefore()
 {
     // Turn Off After
-    turnOffLEDFromTo(33, 36);
+    turnOffLED(33, 36);
 
     // Turn On Before
-    turnOnLEDFromTo(41, 43, colorActiveWord_);
+    turnOnLED(41, 43, colorActiveWord_);
 }
 
 void WordClock:: setAfter()
 {
     // Turn Off Before
-    turnOffLEDFromTo(41, 43);
+    turnOffLED(41, 43);
 
     // Turn On After
-    turnOnLEDFromTo(33, 36, colorActiveWord_);
+    turnOnLED(33, 36, colorActiveWord_);
 }
 
 // Function to turn on "ES IST"
 void WordClock::setWordItIs()
 {
-    turnOnLEDFromTo(0, 1, colorActiveWord_);
-    turnOnLEDFromTo(3, 5, colorActiveWord_);
+    turnOnLED(0, 1, colorActiveWord_);
+    turnOnLED(3, 5, colorActiveWord_);
 }
 
 // Function to turn on "UHR"
 void WordClock::setWordOclock()
 {
-    turnOnLEDFromTo(99, 101, colorActiveWord_);
+    turnOnLED(99, 101, colorActiveWord_);
 }
 
 // ---------- LEDs for Hours
@@ -355,67 +357,67 @@ void WordClock::setHourOne()
 {
     if (clockMinute_ < 5) // "EIN" 
     {
-        turnOnLEDFromTo(63, 65, colorActiveWord_);
+        turnOnLED(63, 65, colorActiveWord_);
     }
     else // "EINS"
     {
-        turnOnLEDFromTo(62, 65, colorActiveWord_);
+        turnOnLED(62, 65, colorActiveWord_);
     }
 }
 
 void WordClock::setHourTwo()
 {
-    turnOnLEDFromTo(55, 58, colorActiveWord_);
+    turnOnLED(55, 58, colorActiveWord_);
 }
 
 void WordClock::setHourThree()
 {
-    turnOnLEDFromTo(66, 69, colorActiveWord_);
+    turnOnLED(66, 69, colorActiveWord_);
 }
 
 void WordClock::setHourFour()
 {
-    turnOnLEDFromTo(73, 76, colorActiveWord_);
+    turnOnLED(73, 76, colorActiveWord_);
 }
 
 void WordClock::setHourFive()
 {
-    turnOnLEDFromTo(51, 54, colorActiveWord_);
+    turnOnLED(51, 54, colorActiveWord_);
 }
 
 void WordClock::setHourSix()
 {
-    turnOnLEDFromTo(83, 87, colorActiveWord_);
+    turnOnLED(83, 87, colorActiveWord_);
 }
 
 void WordClock::setHourSeven()
 {
-    turnOnLEDFromTo(88, 93, colorActiveWord_);
+    turnOnLED(88, 93, colorActiveWord_);
 }
 
 void WordClock::setHourEight()
 {
-    turnOnLEDFromTo(77, 80, colorActiveWord_);
+    turnOnLED(77, 80, colorActiveWord_);
 }
 
 void WordClock::setHourNine()
 {
-    turnOnLEDFromTo(103, 106, colorActiveWord_);
+    turnOnLED(103, 106, colorActiveWord_);
 }
 
 void WordClock::setHourTen()
 {
-    turnOnLEDFromTo(106, 109, colorActiveWord_);
+    turnOnLED(106, 109, colorActiveWord_);
 }
 
 void WordClock::setHourEleven()
 {
-    turnOnLEDFromTo(49, 51, colorActiveWord_);
+    turnOnLED(49, 51, colorActiveWord_);
 }
 
 void WordClock::setHourTwelve()
 {
-    turnOnLEDFromTo(94, 98, colorActiveWord_);
+    turnOnLED(94, 98, colorActiveWord_);
 }
 
 // ---------- LEDs for Minutes
@@ -427,7 +429,7 @@ void WordClock::setMinutePrecision(uint8_t minute)
     {
     case 0:
     {
-        turnOffLEDFromTo(120, 123);
+        turnOffLED(120, 123);
         break;
     }
     case 1:
@@ -450,7 +452,7 @@ void WordClock::setMinutePrecision(uint8_t minute)
     }
     case 4:
     {
-        turnOnLEDFromTo(120, 123, colorMinutePrecision_);
+        turnOnLED(120, 123, colorMinutePrecision_);
         break;
     }
     }
@@ -458,32 +460,32 @@ void WordClock::setMinutePrecision(uint8_t minute)
 
 void WordClock::setMinuteFive()
 {
-    turnOnLEDFromTo(7, 10, colorActiveWord_);
+    turnOnLED(7, 10, colorActiveWord_);
 }
 
 void WordClock::setMinuteTen()
 {
-    turnOnLEDFromTo(18, 21, colorActiveWord_);
+    turnOnLED(18, 21, colorActiveWord_);
 }
 
 void WordClock::setMinuteQuarter()
 {
-    turnOnLEDFromTo(26, 32, colorActiveWord_);
+    turnOnLED(26, 32, colorActiveWord_);
 }
 
 void WordClock::setMinuteTwenty()
 {
-    turnOnLEDFromTo(11, 17, colorActiveWord_);
+    turnOnLED(11, 17, colorActiveWord_);
 }
 
 void WordClock::setMinuteHalf()
 {
-    turnOnLEDFromTo(44, 47, colorActiveWord_);
+    turnOnLED(44, 47, colorActiveWord_);
 }
 
 void WordClock::setMinuteThreeQuarter()
 {
-    turnOnLEDFromTo(22, 32, colorActiveWord_);
+    turnOnLED(22, 32, colorActiveWord_);
 }
 
 // ---------- Feature functions
@@ -492,3 +494,9 @@ void WordClock::setBrightness(uint8_t brightnessValue)
 {
     FastLED.setBrightness(brightnessValue);
 }
+
+
+void WordClock::showClock(bool val)
+{
+    showClock_ = val;
+} 

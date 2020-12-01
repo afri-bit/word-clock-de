@@ -44,7 +44,6 @@
 
 #include "color.h"
 #include "clock_mode.h"
-#include "meridiem.h"
 
 class WordClock
 {
@@ -55,7 +54,6 @@ private:
     uint8_t clockHour_ = 0;
     uint8_t clockMinute_ = 0;
     uint8_t clockSecond_ = 0;
-    Meridiem clockMeridiem_ = AM;
 
     Color colorActiveWord_{255, 255, 255};
     Color colorInactiveWord_{0, 0, 0};
@@ -65,15 +63,18 @@ private:
 
     ClockMode clockMode_ = FORMAL;
 
+    bool showClock_ = true;
+
     uint8_t maxBrightness_;
     uint8_t brightness_;
 
     // General LEDs function
-    void turnOffLEDFromTo(uint8_t from, uint8_t to);
+    void turnOffLED(uint8_t from, uint8_t to);
     void turnOffLED(uint8_t ledNumber);
+    void turnOffAllLEDs();
     
     void turnOnLED(uint8_t ledNumber, const Color &color);
-    void turnOnLEDFromTo(uint8_t from, uint8_t to, const Color &color);
+    void turnOnLED(uint8_t from, uint8_t to, const Color &color);
 
     // Set the LEDs based on the hour, minute and second
     void setHour(uint8_t hour);
@@ -138,7 +139,7 @@ public:
      * @param minute 
      * @param second 
      */
-    void setClock(uint8_t hour, uint8_t minute, uint8_t second);
+    void setTime(uint8_t hour, uint8_t minute, uint8_t second);
 
     /**
      * @brief Set the Brightness object
@@ -183,7 +184,8 @@ public:
      */
     void setColorSecond(uint8_t red, uint8_t green, uint8_t blue);
 
-    void turnOffAllLEDs();
+    void showClock(bool val); 
+
 };
 
 #endif /* WORDCLOCK_H_ */
