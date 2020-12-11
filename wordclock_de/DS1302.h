@@ -13,13 +13,13 @@
 class Time {
  public:
   enum Day {
-    kSunday    = 1,
-    kMonday    = 2,
-    kTuesday   = 3,
-    kWednesday = 4,
-    kThursday  = 5,
-    kFriday    = 6,
-    kSaturday  = 7
+    kMonday    = 0,
+    kTuesday   = 1,
+    kWednesday = 2,
+    kThursday  = 3,
+    kFriday    = 4,
+    kSaturday  = 5,
+    kSunday    = 6,
   };
 
   // Creates a Time object with a given time.
