@@ -26,6 +26,6 @@ CRGB leds[LED_COUNT];
 #define MOTION_DTC_PIN_DATA 12
 
 static uint32_t step_time = 10; // Unit in ms
-static uint32_t timeout_motion_detn =60000; // Unit in ms
+static uint32_t timeout_motion_detn = 60000; // Unit in ms
 static uint32_t step_motion_detn = timeout_motion_detn / step_time;  
 
