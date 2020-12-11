@@ -1,12 +1,3 @@
-/* ****************************************************************************
- * Components:
- *  - LED WS2812B 
- *  
- * ============================================================================
- * 
- * 
- * ****************************************************************************
- */
 
 #include "settings.h"
 #include "wordclock.h"
@@ -14,12 +5,122 @@
 
 #include "DS1302.h"
 
-// Create a DS1302 object.
+#include "data.h"
+#include "helper.h"
+
+// Global objects and variables for the system
 DS1302 rtc(RTC_PIN_ENABLE, RTC_PIN_IO, RTC_PIN_CLOCK);
 
+// WordClock object declaration
 WordClock wordClock{leds, LED_COUNT};
 
+// Counter for motion detection
 static uint32_t ctr_motion_detn = 0;
+static int motion_detected_prev = LOW;
+
+// ============================================================================
+/**
+ * @brief Function to check if the message is valid. The key to prove that the
+ *        message is valid to check the last byte of the message frame, which
+ *        is called Checksum byte. The method to be used to create and prove 
+ *        the checksum is XOR method.
+ * 
+ * @param msg Pointer to message frame array
+ * @param size Size of the message
+ * @return true Message is valid
+ * @return false Message is invalid
+ */
+bool message_valid(uint8_t *msg, int size)
+{
+    uint8_t tmp = 0;
+    uint8_t chksum = msg[size - 1];
+
+    for (int i = 0; i < size - 1; i++)
+    {
+        // XOR operation
+        tmp ^= msg[i];
+    }
+
+    bool ret = tmp == chksum ? true : false;
+
+    return ret;
+}
+
+void process_message(uint8_t *msg, int size)
+{
+    // Process the incoming message if the length is sufficient
+    // Ignore message length below 10: 4 bytes id, 4 bytes length,
+    // at least 1 byte payload, 1 byte checksum
+    if (size >= 10)
+    {
+        if (message_valid(msg, size))
+        {
+            // Get the size based on represented bytes
+            int size_payload = bytes_to_int(&(msg[4]), 4);
+
+            // Start to process the message, if the informed size is
+            // equal to payload size
+            if (size - 9 == size_payload)
+            {
+                int msg_id = bytes_to_int(msg, 4);
+                switch (msg_id)
+                {
+                case 0x550: // Background Color
+                {
+                    // Set the color with the WordClock object
+                    wordClock.setColorBackground(msg[8], msg[9], msg[10]);
+                    break;
+                }
+                case 0x551: // Active Letter Color
+                {
+                    // Set the color with the WordClock object
+                    wordClock.setColorActive(msg[8], msg[9], msg[10]);
+                    break;
+                }
+                case 0x552: // AM/PM Color
+                {
+                    // Set the color with the WordClock object
+                    wordClock.setColorAmPm(msg[8], msg[9], msg[10]);
+                    break;
+                }
+                case 0x553: // Minutes Color (Corner LED)
+                {
+                    // Set the color with the WordClock object
+                    wordClock.setColorMinute(msg[8], msg[9], msg[10]);
+                    break;
+                }
+                case 0x554: // Secondes Color
+                {
+                    // Set the color with the WordClock object
+                    wordClock.setColorSecond(msg[8], msg[9], msg[10]);
+                    break;
+                }
+                case 0x555: // Timeout for Motion Detection
+                {
+                    // TODO: Set the timeout
+                    break;
+                }
+                case 0x700: // Date Time for Synchronization
+                {
+                    DateTime dateTime;
+                    memcpy(&dateTime, &(msg[8]), 8);
+
+                    Time t(dateTime.year, dateTime.month, dateTime.day, dateTime.hour, dateTime.min, dateTime.second, static_cast<Time::Day>(dateTime.day_week));
+
+                    // Update the time and date on the chip, to reset the precision
+                    rtc.time(t);
+
+                    break;
+                }
+                }
+            }
+        }
+    }
+
+    return;
+}
+
+// =============================================================================
 
 /**
  * @brief This function sets up the ledsand tells the controller about them
@@ -27,7 +128,7 @@ static uint32_t ctr_motion_detn = 0;
  */
 void setup()
 {
-    // sanity check delay - allows reprogramming if accidently blowing power w/leds
+    // Sanity check delay - allows reprogramming if accidently blowing power with leds
     delay(2000);
 
     // Init the LEDs (type and assign the pin number)
@@ -53,28 +154,18 @@ void setup()
     // rtc.time(t);
 }
 
-int incomingByte = 0; // for incoming serial data
-
 void loop()
 {
-    // // send data only when you receive data:
-    // if (Serial.available() > 0)
-    // {
-    //     uint8_t payload[3];
-    //     incomingByte = Serial.readBytes(payload, 3);
+    // send data only when you receive data:
+    if (Serial.available() > 0)
+    {
+        uint8_t rx_msg[30];
+        int incoming_bytes = Serial.readBytes(rx_msg, sizeof(rx_msg));
+        process_message(rx_msg, incoming_bytes);
+    }
 
-    //     uint8_t hour = payload[0];
-    //     uint8_t minute = payload[1];
-    //     uint8_t second = payload[2];
-    //     wordClock.turnOffAllLEDs();
-    //     wordClock.setBrightness(50);
-    //     wordClock.setClock(hour, minute, second);
-    //     FastLED.show();
-    //     delay(1000);
-    // }
-
-    int motionDetected = digitalRead(MOTION_DTC_PIN_DATA);
-    if (motionDetected == HIGH) // Motion detected
+    int motion_detected = digitalRead(MOTION_DTC_PIN_DATA);
+    if (motion_detected_prev == LOW && motion_detected == HIGH) // Motion detected, but only rising edge
     {
         // Reset the counter
         ctr_motion_detn = 0;
@@ -90,6 +181,8 @@ void loop()
             wordClock.showClock(false);
         }
     }
+    // Set current state to previous state
+    motion_detected_prev = motion_detected;
 
     // Get the current time and date from the chip.
     Time t = rtc.time();
@@ -98,19 +191,7 @@ void loop()
         wordClock.setTime(t.hr, t.min, t.sec);
     }
 
-    // else
-    // {
-    //     Serial.println(t.hr);
-    //     Serial.println(t.min);
-    //     Serial.println(t.sec);
-    //     Serial.println(t.date);
-    //     Serial.println(t.mon);
-    //     Serial.println(t.yr);
-    //     Serial.println("==================================");
-    // }
-
     wordClock.setBrightness(30);
-    
 
     // With the following delay, the application can be controlled using certain execution time
     // This makes easier to implement counters/timers for the application
