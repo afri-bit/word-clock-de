@@ -56,10 +56,10 @@ private:
     uint8_t clockSecond_ = 0;
 
     Color colorActiveWord_{255, 255, 255};
-    Color colorInactiveWord_{0, 0, 0};
+    Color colorBackground_{0, 0, 0};
     Color colorAmPm_{255, 0, 0};
     Color colorSecond_{240, 145, 20};
-    Color colorMinutePrecision_{255, 0, 255};
+    Color colorMinute_{255, 0, 255};
 
     ClockMode clockMode_ = FORMAL;
 
@@ -158,13 +158,13 @@ public:
     void setColorActive(uint8_t red, uint8_t green, uint8_t blue);
 
     /**
-     * @brief Set the Color In Active object
+     * @brief Set the background color (inactive letters)
      * 
      * @param red 
      * @param green 
      * @param blue 
      */
-    void setColorInActive(uint8_t red, uint8_t green, uint8_t blue);
+    void setColorBackground(uint8_t red, uint8_t green, uint8_t blue);
 
     /**
      * @brief Set the Color Am Pm object
@@ -183,6 +183,15 @@ public:
      * @param blue 
      */
     void setColorSecond(uint8_t red, uint8_t green, uint8_t blue);
+
+    /**
+     * @brief Set the Color Minute object
+     * 
+     * @param red 
+     * @param green 
+     * @param blue 
+     */
+    void setColorMinute(uint8_t red, uint8_t green, uint8_t blue);
 
     void showClock(bool val); 
 

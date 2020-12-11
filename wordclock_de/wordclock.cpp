@@ -53,6 +53,9 @@ void WordClock::setTime(uint8_t hour, uint8_t minute, uint8_t second)
 
     if (showClock_)
     {
+        // Set the backround color
+        turnOnLED(0, 109, colorBackground_);
+
         // Get the meridiem (AM or PM)
         if (hour >= 12)
         {
@@ -89,71 +92,71 @@ void WordClock::setHour(uint8_t hour)
 {
     switch (hour)
     {
-        case 0:
-        {
-            setHourTwelve();
-            break;
-        }
-        case 1:
-        {
-            setHourOne();
-            break;
-        }
-        case 2:
-        {
-            setHourTwo();
-            break;
-        }
-        case 3:
-        {
-            setHourThree();
-            break;
-        }
-        case 4:
-        {
-            setHourFour();
-            break;
-        }
-        case 5:
-        {
-            setHourFive();
-            break;
-        }
-        case 6:
-        {
-            setHourSix();
-            break;
-        }
-        case 7:
-        {
-            setHourSeven();
-            break;
-        }
-        case 8:
-        {
-            setHourEight();
-            break;
-        }
-        case 9:
-        {
-            setHourNine();
-            break;
-        }
-        case 10:
-        {
-            setHourTen();
-            break;
-        }
-        case 11:
-        {
-            setHourEleven();
-            break;
-        }
-        case 12:
-        {
-            setHourTwelve();
-            break;
-        }
+    case 0:
+    {
+        setHourTwelve();
+        break;
+    }
+    case 1:
+    {
+        setHourOne();
+        break;
+    }
+    case 2:
+    {
+        setHourTwo();
+        break;
+    }
+    case 3:
+    {
+        setHourThree();
+        break;
+    }
+    case 4:
+    {
+        setHourFour();
+        break;
+    }
+    case 5:
+    {
+        setHourFive();
+        break;
+    }
+    case 6:
+    {
+        setHourSix();
+        break;
+    }
+    case 7:
+    {
+        setHourSeven();
+        break;
+    }
+    case 8:
+    {
+        setHourEight();
+        break;
+    }
+    case 9:
+    {
+        setHourNine();
+        break;
+    }
+    case 10:
+    {
+        setHourTen();
+        break;
+    }
+    case 11:
+    {
+        setHourEleven();
+        break;
+    }
+    case 12:
+    {
+        setHourTwelve();
+        break;
+    }
     }
 }
 
@@ -232,7 +235,7 @@ void WordClock::setMinute(uint8_t minute)
         setMinuteFive();
         setAfter();
     }
-    else if (minute >=0)
+    else if (minute >= 0)
     {
         // DO NOTHING
     }
@@ -321,7 +324,7 @@ void WordClock::setPm()
     turnOnLED(70, 71, colorAmPm_);
 }
 
-void WordClock:: setBefore()
+void WordClock::setBefore()
 {
     // Turn Off After
     turnOffLED(33, 36);
@@ -330,7 +333,7 @@ void WordClock:: setBefore()
     turnOnLED(41, 43, colorActiveWord_);
 }
 
-void WordClock:: setAfter()
+void WordClock::setAfter()
 {
     // Turn Off Before
     turnOffLED(41, 43);
@@ -355,7 +358,7 @@ void WordClock::setWordOclock()
 // ---------- LEDs for Hours
 void WordClock::setHourOne()
 {
-    if (clockMinute_ < 5) // "EIN" 
+    if (clockMinute_ < 5) // "EIN"
     {
         turnOnLED(63, 65, colorActiveWord_);
     }
@@ -434,25 +437,25 @@ void WordClock::setMinutePrecision(uint8_t minute)
     }
     case 1:
     {
-        turnOnLED(122, colorMinutePrecision_);
+        turnOnLED(122, colorMinute_);
         break;
     }
     case 2:
     {
-        turnOnLED(122, colorMinutePrecision_);
-        turnOnLED(123, colorMinutePrecision_);
+        turnOnLED(122, colorMinute_);
+        turnOnLED(123, colorMinute_);
         break;
     }
     case 3:
     {
-        turnOnLED(122, colorMinutePrecision_);
-        turnOnLED(123, colorMinutePrecision_);
-        turnOnLED(120, colorMinutePrecision_);
+        turnOnLED(122, colorMinute_);
+        turnOnLED(123, colorMinute_);
+        turnOnLED(120, colorMinute_);
         break;
     }
     case 4:
     {
-        turnOnLED(120, 123, colorMinutePrecision_);
+        turnOnLED(120, 123, colorMinute_);
         break;
     }
     }
@@ -495,8 +498,42 @@ void WordClock::setBrightness(uint8_t brightnessValue)
     FastLED.setBrightness(brightnessValue);
 }
 
-
 void WordClock::showClock(bool val)
 {
     showClock_ = val;
-} 
+}
+
+void WordClock::setColorActive(uint8_t red, uint8_t green, uint8_t blue)
+{
+    colorActiveWord_.red = red;
+    colorActiveWord_.green = green;
+    colorActiveWord_.blue = blue;
+}
+
+void WordClock::setColorBackground(uint8_t red, uint8_t green, uint8_t blue)
+{
+    colorBackground_.red = red;
+    colorBackground_.green = green;
+    colorBackground_.green = green;
+}
+
+void WordClock::setColorAmPm(uint8_t red, uint8_t green, uint8_t blue)
+{
+    colorAmPm_.red = red;
+    colorAmPm_.green = green;
+    colorAmPm_.blue = blue;
+}
+
+void WordClock::setColorSecond(uint8_t red, uint8_t green, uint8_t blue)
+{
+    colorSecond_.red = red;
+    colorSecond_.green = green;
+    colorSecond_.blue = blue;
+}
+
+void WordClock::setColorMinute(uint8_t red, uint8_t green, uint8_t blue)
+{
+    colorMinute_.red = red;
+    colorMinute_.green = green;
+    colorMinute_.blue = blue;
+}
