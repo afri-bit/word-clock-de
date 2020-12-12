@@ -493,11 +493,6 @@ void WordClock::setMinuteThreeQuarter()
 
 // ---------- Feature functions
 
-void WordClock::setBrightness(uint8_t brightnessValue)
-{
-    FastLED.setBrightness(brightnessValue);
-}
-
 void WordClock::showClock(bool val)
 {
     showClock_ = val;

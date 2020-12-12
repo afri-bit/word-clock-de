@@ -42,8 +42,7 @@
 
 #include <FastLED.h>
 
-#include "color.h"
-#include "clock_mode.h"
+#include "types.h"
 
 class WordClock
 {
@@ -140,13 +139,6 @@ public:
      * @param second 
      */
     void setTime(uint8_t hour, uint8_t minute, uint8_t second);
-
-    /**
-     * @brief Set the Brightness object
-     * 
-     * @param brightnessValue 
-     */
-    void setBrightness(uint8_t brightnessValue);
 
     /**
      * @brief Set the Color Active object
