@@ -1,24 +1,22 @@
 
-#include "settings.h"
-#include "wordclock.h"
-#include "word_led_display.h"
-
-#include "DS1302.h"
-
-#include "data.h"
+#include "system.h"
 #include "helper.h"
+#include <Wire.h>
+#include <FastLED.h>
 
-// Global objects and variables for the system
-DS1302 rtc(RTC_PIN_ENABLE, RTC_PIN_IO, RTC_PIN_CLOCK);
+#include "wordclock.h"
+#include "ds1302.h"
+#include "bh1750.h"
 
-// WordClock object declaration
+CRGB leds[LED_COUNT];
 WordClock wordClock{leds, LED_COUNT};
+DS1302 rtc(RTC_PIN_ENABLE, RTC_PIN_IO, RTC_PIN_CLOCK);
+BH1750 brightnessSensor;
 
-// Counter for motion detection
-static uint32_t ctr_motion_detn = 0;
-static int motion_detected_prev = LOW;
+uint32_t step_motion_detn = TIMEOUT_MTN_DETN / step_time;
+uint32_t ctr_motion_detn = 0;
+int motion_detected_prev = LOW;
 
-// ============================================================================
 /**
  * @brief Function to check if the message is valid. The key to prove that the
  *        message is valid to check the last byte of the message frame, which
@@ -97,7 +95,10 @@ void process_message(uint8_t *msg, int size)
                 }
                 case 0x555: // Timeout for Motion Detection
                 {
-                    // TODO: Set the timeout
+                    // Set the timeout
+                    int16_t val; // in second
+                    memcpy(&val, &msg[8], 2);
+                    TIMEOUT_MTN_DETN = static_cast<int32_t>(val) * 1000; // Convert to millisecond
                     break;
                 }
                 case 0x700: // Date Time for Synchronization
@@ -105,7 +106,9 @@ void process_message(uint8_t *msg, int size)
                     DateTime dateTime;
                     memcpy(&dateTime, &(msg[8]), 8);
 
-                    Time t(dateTime.year, dateTime.month, dateTime.day, dateTime.hour, dateTime.min, dateTime.second, static_cast<Time::Day>(dateTime.day_week));
+                    Time t(dateTime.year, dateTime.month, dateTime.day,
+                           dateTime.hour, dateTime.min, dateTime.second,
+                           static_cast<Time::Day>(dateTime.day_week));
 
                     // Update the time and date on the chip, to reset the precision
                     rtc.time(t);
@@ -120,6 +123,40 @@ void process_message(uint8_t *msg, int size)
     return;
 }
 
+void reset_brightness_counter()
+{
+}
+
+void process_brightness()
+{
+    if (AUTO_BRIGHTNESS)
+    {
+        uint16_t lux = brightnessSensor.getIntensity();
+        if (lux >= 250) // 100%
+            LED_BRIGHTNESS = 1 * LED_MAX_BRIGHTNESS;
+        else if (lux >= 220) // 90 %
+            LED_BRIGHTNESS = 0.9 * LED_MAX_BRIGHTNESS;
+        else if (lux >= 200) // 80 %
+            LED_BRIGHTNESS = 0.8 * LED_MAX_BRIGHTNESS;
+        else if (lux >= 160) // 70 %
+            LED_BRIGHTNESS = 0.7 * LED_MAX_BRIGHTNESS;
+        else if (lux >= 130) // 60 %
+            LED_BRIGHTNESS = 0.6 * LED_MAX_BRIGHTNESS;
+        else if (lux >= 100) // 50 %
+            LED_BRIGHTNESS = 0.5 * LED_MAX_BRIGHTNESS;
+        else if (lux >= 60) // 40 %
+            LED_BRIGHTNESS = 0.4 * LED_MAX_BRIGHTNESS;
+        else if (lux >= 30) // 30 %
+            LED_BRIGHTNESS = 0.3 * LED_MAX_BRIGHTNESS;
+        else if (lux >= 10) // 20 %
+            LED_BRIGHTNESS = 0.2 * LED_MAX_BRIGHTNESS;
+        else if (lux > 0) // 10 %
+            LED_BRIGHTNESS = 0.1 * LED_MAX_BRIGHTNESS;
+    }
+
+    FastLED.setBrightness(LED_BRIGHTNESS);
+}
+
 // =============================================================================
 
 /**
@@ -131,8 +168,12 @@ void setup()
     // Sanity check delay - allows reprogramming if accidently blowing power with leds
     delay(2000);
 
+    Wire.begin();
+
     // Init the LEDs (type and assign the pin number)
     FastLED.addLeds<WS2812B, LED_PIN, RGB>(leds, LED_COUNT); // GRB ordering is typical
+
+    brightnessSensor.init();
 
     // Init DIGITAL PINS
     pinMode(MOTION_DTC_PIN_DATA, INPUT);
@@ -156,7 +197,7 @@ void setup()
 
 void loop()
 {
-    // send data only when you receive data:
+    // Receiving data from serial to be processed
     if (Serial.available() > 0)
     {
         uint8_t rx_msg[30];
@@ -164,25 +205,36 @@ void loop()
         process_message(rx_msg, incoming_bytes);
     }
 
-    int motion_detected = digitalRead(MOTION_DTC_PIN_DATA);
-    if (motion_detected_prev == LOW && motion_detected == HIGH) // Motion detected, but only rising edge
+    if (TIMEOUT_MTN_DETN < 1000)
     {
-        // Reset the counter
-        ctr_motion_detn = 0;
+        wordClock.showClock(false);
+    }
+    else if (TIMEOUT_MTN_DETN > 3600000)
+    {
         wordClock.showClock(true);
     }
-    else // No motion detected
+    else
     {
-        ctr_motion_detn++;
-
-        if (ctr_motion_detn >= step_motion_detn)
+        int motion_detected = digitalRead(MOTION_DTC_PIN_DATA);
+        if (motion_detected_prev == LOW && motion_detected == HIGH) // Motion detected, but only rising edge
         {
+            // Reset the counter
             ctr_motion_detn = 0;
-            wordClock.showClock(false);
+            wordClock.showClock(true);
         }
+        else // No motion detected
+        {
+            ctr_motion_detn++;
+
+            if (ctr_motion_detn >= step_motion_detn)
+            {
+                ctr_motion_detn = 0;
+                wordClock.showClock(false);
+            }
+        }
+        // Set current state to previous state
+        motion_detected_prev = motion_detected;
     }
-    // Set current state to previous state
-    motion_detected_prev = motion_detected;
 
     // Get the current time and date from the chip.
     Time t = rtc.time();
@@ -191,7 +243,7 @@ void loop()
         wordClock.setTime(t.hr, t.min, t.sec);
     }
 
-    wordClock.setBrightness(30);
+    process_brightness();
 
     // With the following delay, the application can be controlled using certain execution time
     // This makes easier to implement counters/timers for the application
