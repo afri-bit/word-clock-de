@@ -3,7 +3,7 @@
 #else
 #include "WProgram.h"
 #endif
-#include "DS1302.h"
+#include "ds1302.h"
 
 #include <stdint.h>
 
