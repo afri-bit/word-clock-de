@@ -26,9 +26,9 @@ static uint32_t step_time = 10; // Unit in ms
 const uint32_t LED_COUNT = 124;
 
 // System Configuration Parameter
-uint8_t LED_MAX_BRIGHTNESS = 30;
+uint8_t LED_MAX_BRIGHTNESS = 50;
 uint8_t LED_BRIGHTNESS = 30;
 bool AUTO_BRIGHTNESS = true;
-int32_t TIMEOUT_MTN_DETN = 60000; // Unit in ms
+int32_t TIMEOUT_MTN_DETN = 30000; // Unit in ms
 
 #endif /* SYSTEM_H_ */

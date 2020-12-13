@@ -16,6 +16,7 @@ BH1750 brightnessSensor;
 uint32_t step_motion_detn = TIMEOUT_MTN_DETN / step_time;
 uint32_t ctr_motion_detn = 0;
 int motion_detected_prev = LOW;
+uint32_t ctr_brightness_sensor = 0;
 
 /**
  * @brief Function to check if the message is valid. The key to prove that the
@@ -61,6 +62,8 @@ void process_message(uint8_t *msg, int size)
             if (size - 9 == size_payload)
             {
                 int msg_id = bytes_to_int(msg, 4);
+
+                // TODO: Store the data to EEPROM after receiving the message
                 switch (msg_id)
                 {
                 case 0x550: // Background Color
@@ -87,7 +90,7 @@ void process_message(uint8_t *msg, int size)
                     wordClock.setColorMinute(msg[8], msg[9], msg[10]);
                     break;
                 }
-                case 0x554: // Secondes Color
+                case 0x554: // Seconds Color
                 {
                     // Set the color with the WordClock object
                     wordClock.setColorSecond(msg[8], msg[9], msg[10]);
@@ -129,29 +132,35 @@ void reset_brightness_counter()
 
 void process_brightness()
 {
+
     if (AUTO_BRIGHTNESS)
     {
-        uint16_t lux = brightnessSensor.getIntensity();
-        if (lux >= 250) // 100%
-            LED_BRIGHTNESS = 1 * LED_MAX_BRIGHTNESS;
-        else if (lux >= 220) // 90 %
-            LED_BRIGHTNESS = 0.9 * LED_MAX_BRIGHTNESS;
-        else if (lux >= 200) // 80 %
-            LED_BRIGHTNESS = 0.8 * LED_MAX_BRIGHTNESS;
-        else if (lux >= 160) // 70 %
-            LED_BRIGHTNESS = 0.7 * LED_MAX_BRIGHTNESS;
-        else if (lux >= 130) // 60 %
-            LED_BRIGHTNESS = 0.6 * LED_MAX_BRIGHTNESS;
-        else if (lux >= 100) // 50 %
-            LED_BRIGHTNESS = 0.5 * LED_MAX_BRIGHTNESS;
-        else if (lux >= 60) // 40 %
-            LED_BRIGHTNESS = 0.4 * LED_MAX_BRIGHTNESS;
-        else if (lux >= 30) // 30 %
-            LED_BRIGHTNESS = 0.3 * LED_MAX_BRIGHTNESS;
-        else if (lux >= 10) // 20 %
-            LED_BRIGHTNESS = 0.2 * LED_MAX_BRIGHTNESS;
-        else if (lux > 0) // 10 %
-            LED_BRIGHTNESS = 0.1 * LED_MAX_BRIGHTNESS;
+        ctr_brightness_sensor++;
+        if (ctr_brightness_sensor >= 100)
+        {
+            uint16_t lux = brightnessSensor.getIntensity();
+            if (lux >= 150) // 100%
+                LED_BRIGHTNESS = 1 * LED_MAX_BRIGHTNESS;
+            else if (lux >= 130) // 90 %
+                LED_BRIGHTNESS = 0.9 * LED_MAX_BRIGHTNESS;
+            else if (lux >= 110) // 80 %
+                LED_BRIGHTNESS = 0.8 * LED_MAX_BRIGHTNESS;
+            else if (lux >= 80) // 70 %
+                LED_BRIGHTNESS = 0.7 * LED_MAX_BRIGHTNESS;
+            else if (lux >= 60) // 60 %
+                LED_BRIGHTNESS = 0.6 * LED_MAX_BRIGHTNESS;
+            else if (lux >= 40) // 50 %
+                LED_BRIGHTNESS = 0.5 * LED_MAX_BRIGHTNESS;
+            else if (lux >= 20) // 40 %
+                LED_BRIGHTNESS = 0.4 * LED_MAX_BRIGHTNESS;
+            else if (lux >= 10) // 30 %
+                LED_BRIGHTNESS = 0.3 * LED_MAX_BRIGHTNESS;
+            else if (lux >= 5) // 20 %
+                LED_BRIGHTNESS = 0.2 * LED_MAX_BRIGHTNESS;
+            else if (lux >= 0) // 10 %
+                LED_BRIGHTNESS = 0.1 * LED_MAX_BRIGHTNESS;
+            ctr_brightness_sensor = 0;
+        }
     }
 
     FastLED.setBrightness(LED_BRIGHTNESS);
@@ -186,13 +195,7 @@ void setup()
 
     Serial.begin(9600); // opens serial port, sets data rate to 9600 bps
 
-    // TODO: Uncomment following code to set the RTC initially (Debug purpose)
-    // Make a new time object to set the date and time.
-    // Sunday, September 22, 2013 at 01:38:50.
-    // Time t(2020, 11, 30, 23, 34, 00, Time::kMonday);
-
-    // Set the time and date on the chip.
-    // rtc.time(t);
+    // TODO: Read memory EEPROM and initialize the clock with previous stored values
 }
 
 void loop()

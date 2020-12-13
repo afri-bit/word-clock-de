@@ -308,36 +308,24 @@ void WordClock::setSecond(uint8_t second)
 
 void WordClock::setAm()
 {
-    // Turn Off PM
-    turnOffLED(70, 71);
-
     // Turn On AM
     turnOnLED(59, 60, colorAmPm_);
 }
 
 void WordClock::setPm()
 {
-    // Turn Off AM
-    turnOffLED(59, 60);
-
     // Turn On PM
     turnOnLED(70, 71, colorAmPm_);
 }
 
 void WordClock::setBefore()
 {
-    // Turn Off After
-    turnOffLED(33, 36);
-
     // Turn On Before
     turnOnLED(41, 43, colorActiveWord_);
 }
 
 void WordClock::setAfter()
 {
-    // Turn Off Before
-    turnOffLED(41, 43);
-
     // Turn On After
     turnOnLED(33, 36, colorActiveWord_);
 }
@@ -509,7 +497,7 @@ void WordClock::setColorBackground(uint8_t red, uint8_t green, uint8_t blue)
 {
     colorBackground_.red = red;
     colorBackground_.green = green;
-    colorBackground_.green = green;
+    colorBackground_.blue = blue;
 }
 
 void WordClock::setColorAmPm(uint8_t red, uint8_t green, uint8_t blue)
