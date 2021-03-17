@@ -11,14 +11,14 @@ class LEDStrip(Adafruit_NeoPixel):
     def turn_on_led(self, led_nr: int, c: ColorRGB):
         self.setPixelColor(led_nr, Color(c.green, c.red, c.blue))
 
-    def turn_on_leds(self, led_list: list(), c: ColorRGB):
+    def turn_on_leds(self, led_list: list, c: ColorRGB):
         for led in led_list:
             self.turn_on_led(led, c)
 
     def turn_off_led(self, led_nr: int):
         self.setPixelColor(led_nr, Color(0, 0, 0))
 
-    def turn_off_leds(self, led_list: list()):
+    def turn_off_leds(self, led_list: list):
         for led in led_list:
             self.turn_off_led(led)
 

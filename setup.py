@@ -2,12 +2,13 @@ from setuptools import setup
 
 setup(
     name='word-clock-controller',
-    version='',
-    packages=['test', 'wcctrl', 'wcctrl.core', 'wcctrl.type', 'wcctrl.config', 'wcctrl.hardware', 'wcctrl.hardware.rtc',
-              'wcctrl.hardware.sensor', 'wcctrl.hardware.sensor.motion', 'wcctrl.hardware.sensor.brightness'],
+    version='0.0.1',
+    packages=['test', 'wcctrl', 'wcctrl.core', 'wcctrl.type', 'wcctrl.config', 'wcctrl.component',
+              'wcctrl.component.led', 'wcctrl.component.rtc', 'wcctrl.component.sensor',
+              'wcctrl.component.sensor.motion', 'wcctrl.component.sensor.brightness'],
     url='',
     license='',
     author='Afrizal Herlambnag',
-    author_email='',
-    description=''
+    author_email='Afrizal.Herlambang@gmail.com',
+    description='Word Clock German Version'
 )

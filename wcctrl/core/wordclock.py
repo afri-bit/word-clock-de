@@ -1,5 +1,4 @@
 from wcctrl.config.user import UserConfig
-from wcctrl.config.system import SystemConfig
 from wcctrl.component.led.ws2812b import LEDStrip
 
 
@@ -76,7 +75,7 @@ class WordClock:
 
         self.__led_minute_precision = {
             0: [120, 121, 122, 123],
-            1: [120],
+            1: [122],
             2: [122, 123],
             3: [120, 122, 123],
             4: [120, 121, 122, 123]
@@ -90,7 +89,7 @@ class WordClock:
         # Turn OFF all LEDs for second indicator
         self.__led_strip.turn_off_leds(self.__led_second)
 
-        self.__led_strip.turn_on_led(self.__led_second[second_interval])
+        self.__led_strip.turn_on_led(self.__led_second[second_interval], self.__user_cfg.get_color_second())
 
     def __set_minute(self, minute: int):
         """
@@ -153,7 +152,8 @@ class WordClock:
         if minute_precision == 0:
             self.__led_strip.turn_off_leds(self.__led_minute_precision[minute_precision])
         else:
-            self.__led_strip.turn_on_leds(self.__led_minute_precision[minute_precision], self.__user_cfg.get_color_minute())
+            self.__led_strip.turn_on_leds(self.__led_minute_precision[minute_precision],
+                                          self.__user_cfg.get_color_minute())
 
     def __set_hour(self, hour: int):
         color_active = self.__user_cfg.get_color_active_letter()
@@ -201,7 +201,7 @@ class WordClock:
 
         if self.__show_clock:
             # Turn on background color
-            self.__led_strip.turn_off_leds(list(range(0, 110)), self.__user_cfg.get_color_background())
+            self.__led_strip.turn_on_leds(list(range(0, 110)), self.__user_cfg.get_color_background())
 
             # Set meridiem color
             if hour >= 12:
@@ -211,7 +211,11 @@ class WordClock:
                 # Set AM
                 self.__led_strip.turn_on_leds(self.__led_am, self.__user_cfg.get_color_ampm())
 
-            self.__set_hour(hour % 12)
+            if minute >= 25:
+                self.__set_hour((hour % 12) + 1)
+            else:
+                self.__set_hour(hour % 12)
+
             self.__set_minute(minute)
             self.__set_minute_precision(minute)
             self.__set_second(second)
