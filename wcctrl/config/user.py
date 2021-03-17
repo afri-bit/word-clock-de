@@ -7,22 +7,22 @@ from wcctrl.type.brightness import *
 from wcctrl.type.light import *
 
 
-class SystemConfig:
+class UserConfig:
     __instance = None
 
     @staticmethod
     def get_instance():
         """ Static access method. """
-        if SystemConfig.__instance is None:
-            SystemConfig()
-        return SystemConfig.__instance
+        if UserConfig.__instance is None:
+            UserConfig()
+        return UserConfig.__instance
 
     def __init__(self):
         """ Virtually private constructor. """
-        if SystemConfig.__instance is not None:
+        if UserConfig.__instance is not None:
             raise Exception("Cannot create multiple instances of this class. Singleton!")
         else:
-            SystemConfig.__instance = self
+            UserConfig.__instance = self
 
         # Path variables
         self.__home_path = os.path.abspath(str(Path.home()))
