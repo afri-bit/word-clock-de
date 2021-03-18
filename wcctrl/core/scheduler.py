@@ -32,7 +32,7 @@ class WordClockScheduler(threading.Thread):
 
         self.__brightness_auto_prev = self.__user_config.get_brightness().auto
         self.__brightness_interval = 1  # Unit in second
-        self.__brightness_counter_max = int(self.__brigthness_interval / self.__step_time)
+        self.__brightness_counter_max = int(self.__brightness_interval / self.__step_time)
         self.__brightness_counter = 0
 
         self.__light_always_on_prev = self.__user_config.get_light().always_on
@@ -78,6 +78,7 @@ class WordClockScheduler(threading.Thread):
         print("WordClock Scheduler stopped...!")
         print("Turn Off All LEDs...")
         self.__led_strip.turn_off_all_leds()
+        self.__led_strip.show()
 
     def __process_light(self):
         light_config = self.__user_config.get_light()
