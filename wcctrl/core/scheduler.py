@@ -123,7 +123,7 @@ class WordClockScheduler(threading.Thread):
         if brightness_config.auto:  # Auto Brightness
             self.__brightness_counter += 1
             if self.__brightness_counter >= self.__brightness_counter_max:
-                lux = self.__brightness.get_result()
+                lux = self.__brightness.read_light()
                 max_brightness = brightness_config.max
 
                 led_brightness = int()
