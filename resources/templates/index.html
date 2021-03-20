@@ -17,7 +17,7 @@
         crossorigin="anonymous"></script>
 
     <script type="text/javascript" src="js/farbtastic.js"></script>
-    
+
     <link rel="css" href="style.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
 
@@ -27,62 +27,80 @@
 </head>
 
 <body>
-    <script type="text/javascript" src="js/app.js"></script>
-
-
-    <button id="bbb">alskjdfoiwejfoiewjf</button>
-
-
 
     <div class="container" style="max-width: 30em; background:#aaaaaa; height:100vh">
 
-        <!-- <div class="container" >
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="#">Navbar</a>
-            </nav>
-        </div> -->
-
-        <!-- <nav class="navbar fixed-top navbar-light bg-light">
-            <a class="navbar-brand" href="#">Fixed top</a>
-          </nav> -->
-
         <h1 class="text-center">Word Clock</h1>
 
-        <div class="container">
-            Color
+        <h4 class="text">Color</h4>
 
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2"
-                    data-bs-toggle="dropdown" aria-expanded="false" style="width: 100%;">
-                    Component
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                    <li><button class="dropdown-item" type="button">Background</button></li>
-                    <li><button class="dropdown-item" type="button">Hours</button></li>
-                    <li><button class="dropdown-item" type="button">Minutes</button></li>
-                    <li><button class="dropdown-item" type="button">Seconds</button></li>
-                    <li><button class="dropdown-item" type="button">Meridiem</button></li>
-                </ul>
-            </div>
+        <div class="container">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 30%;"><label>Background</label></td>
+                    <td style="width: 30%;"><input type="color" id="color_background" style="width: 80%;"></td>
+                    <td style="width: 40%;"><button class="btn btn-primary" id="btn_set_color_background"
+                            style="width: 100%">SET</button></td>
+                </tr>
+
+                <tr>
+                    <td style="width: 30%;"><label>Active Letter</label></td>
+                    <td style="width: 30%;"><input type="color" id="color_active_letter" style="width: 80%;"></td>
+                    <td style="width: 40%;"><button class="btn btn-primary" id="btn_set_color_active_letter"
+                            style="width: 100%;">SET</button></td>
+                </tr>
+
+                <tr>
+                    <td style="width: 30%;"><label>Minute</label></td>
+                    <td style="width: 30%;"><input type="color" id="color_minute" style="width: 80%;"></td>
+                    <td style="width: 40%;"><button class="btn btn-primary" id="btn_set_color_minute"
+                            style="width: 100%;">SET</button></td>
+                </tr>
+
+                <tr>
+                    <td style="width: 30%;"><label>Second</label></td>
+                    <td style="width: 30%;"><input type="color" id="color_second" style="width: 80%;"></td>
+                    <td style="width: 40%;"><button class="btn btn-primary" id="btn_set_color_second"
+                            style="width: 100%;">SET</button></td>
+                </tr>
+
+                <tr>
+                    <td style="width: 30%;"><label>AM PM</label></td>
+                    <td style="width: 30%;"><input type="color" id="color_ampm" style="width: 80%;"></td>
+                    <td style="width: 40%;"><button class="btn btn-primary" id="btn_set_color_ampm"
+                            style="width: 100%;">SET</button></td>
+                </tr>
+
+            </table>
 
         </div>
 
         <br>
 
+        <h4 class="text">Brightness</h4>
+
         <div class="container">
-            Brightness
-            <br>
 
             <div class="container">
-
+                <label>Max</label>
+                <br>
                 <i class="far fa-sun"></i>
-                <input type="range" id="range" min="10" max="100" value="100" style="width: 88%;">
+                <input type="range" id="range_brightness_max" min="0" max="255" value="100" style="width: 88%;">
                 <i class="fas fa-sun"></i>
 
+            </div>
+
+            <br>
+            <div class="container">
+                <label>Value</label>
+                <br>
+                <i class="far fa-sun"></i>
+                <input type="range" id="range_brightness_value" min="0" max="100" value="100" style="width: 88%;">
+                <i class="fas fa-sun"></i>
 
                 <div style="float: right; margin-right: 5%; margin-top: 1em;">
                     <label style="margin-right: 0.5em">Auto Brightness</label>
-                    <input type="checkbox" id="scales" name="scales" style="zoom: 1.5" checked />
+                    <input type="checkbox" id="check_brightness_auto" name="scales" style="zoom: 1.5"/>
 
                 </div>
 
@@ -92,37 +110,29 @@
 
         <br><br>
 
-
+        <h4 class="text">Light</h4>
 
         <div class="container">
-            <label>Motion Detection Timeout</label>
-            <br>
-            <div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2"
-                    data-bs-toggle="dropdown" aria-expanded="false" style="width: 100%;">
-                    Component
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                    <li><button class="dropdown-item" type="button" id="aaa">Always ON</button></li>
-                    <li><button class="dropdown-item" type="button">Always OFF</button></li>
-                    <li><button class="dropdown-item" type="button">10 Seconds</button></li>
-                    <li><button class="dropdown-item" type="button">20 Seconds</button></li>
-                    <li><button class="dropdown-item" type="button">30 Seconds</button></li>
-                    <li><button class="dropdown-item" type="button">1 Minute</button></li>
-                    <li><button class="dropdown-item" type="button">3 Minutes</button></li>
-                    <li><button class="dropdown-item" type="button">5 Minutes</button></li>
-                    <li><button class="dropdown-item" type="button">10 Minutes</button></li>
-                    <li><button class="dropdown-item" type="button">20 Minutes</button></li>
-                    <li><button class="dropdown-item" type="button">30 Minutes</button></li>
-                    <li><button class="dropdown-item" type="button">60 Minutes</button></li>
-                </ul>
+            <div class="container">
+                <label>Timeout</label>
+                <br>
+                <input type="range" id="range_light_timeout" min="0" max="600" value="100" style="width: 88%;">
+
+                <div style="float: right; margin-right: 5%; margin-top: 1em;">
+                    <label style="margin-right: 0.5em">Always ON</label>
+                    <input type="checkbox" id="check_light_always_on" name="scales" style="zoom: 1.5"/>
+
+                </div>
+
             </div>
 
         </div>
 
     </div>
 
-<script type="text/javascript" src="{{url_for('static', filename='abcde.js')}}"></script>
+    <script type="text/javascript" src="../static/app.js"></script>
+    <!-- <script type="text/javascript" src="{{url_for('static', filename='app.js')}}"></script> -->
+
 </body>
 
 

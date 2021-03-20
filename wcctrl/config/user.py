@@ -63,6 +63,9 @@ class UserConfig:
     def get_config(self) -> dict:
         return self.__config
 
+    def set_config(self, config: dict):
+        self.__config = config
+
     def set_color_background(self, val: ColorRGB):
         self.__config["color"]["background"] = val.__dict__
         self.__update_config()
@@ -80,7 +83,7 @@ class UserConfig:
         self.__update_config()
 
     def set_color_ampm(self, val: ColorRGB):
-        self.__config["color"]["second"] = val.__dict__
+        self.__config["color"]["ampm"] = val.__dict__
         self.__update_config()
 
     def set_brightness(self, val: Brightness):

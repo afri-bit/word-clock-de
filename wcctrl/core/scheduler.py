@@ -1,6 +1,7 @@
+import os
 import time
-import threading
 import datetime
+import pickle
 
 from wcctrl.core.wordclock import WordClock
 from wcctrl.component.led.ws2812b import LEDStrip
@@ -10,7 +11,7 @@ from wcctrl.component.sensor.brightness.bh1750 import BH1750
 from wcctrl.config.user import UserConfig
 
 
-class WordClockScheduler(threading.Thread):
+class WordClockScheduler:
     """
     Thread class with a stop() method. The thread itself has to check
     regularly for the stopped() condition.
@@ -18,8 +19,7 @@ class WordClockScheduler(threading.Thread):
 
     def __init__(self, led_strip: LEDStrip, wordclock: WordClock, rtc: DS1302, motion: RCWL0516, brightness: BH1750,
                  user_config: UserConfig):
-        super(WordClockScheduler, self).__init__()
-        self.__stop_event = threading.Event()
+        self.__running = True
 
         self.__led_strip = led_strip
         self.__wordclock = wordclock
@@ -31,7 +31,7 @@ class WordClockScheduler(threading.Thread):
         self.__step_time = 0.1  # Unit in ms
 
         self.__brightness_auto_prev = self.__user_config.get_brightness().auto
-        self.__brightness_interval = 1  # Unit in second
+        self.__brightness_interval = 2  # Unit in second
         self.__brightness_counter_max = int(self.__brightness_interval / self.__step_time)
         self.__brightness_counter = 0
 
@@ -39,18 +39,17 @@ class WordClockScheduler(threading.Thread):
         self.__light_timeout_prev = self.__user_config.get_light().timeout
         self.__light_timeout_ctr = 0
 
-    def stop(self):
-        self.__stop_event.set()
-
-    def join(self, *args, **kwargs):
-        self.stop()
-        super(WordClockScheduler, self).join(*args, **kwargs)
-
     def run(self):
 
         # While Loop in separate Thread
-        while not self.__stop_event.is_set():
+        while self.__running:
             time_start = datetime.datetime.now()
+
+            # Update config from shm
+            shared_memory = "/dev/shm/wc_shm"
+            if os.path.getsize(shared_memory) > 0:
+                with open(shared_memory, "rb") as f:
+                    self.__user_config.set_config(pickle.loads(f.read()))
 
             self.__process_light()
 
@@ -66,7 +65,7 @@ class WordClockScheduler(threading.Thread):
             time_end = datetime.datetime.now()
             time_delta = time_end - time_start
             time_delta_sec = time_delta.total_seconds()
-            print("Task takes: " + str(time_delta_sec))
+            # print("Task takes: " + str(time_delta_sec))
 
             # Calculate the difference to the time step
             if time_delta_sec < self.__step_time:
@@ -74,11 +73,6 @@ class WordClockScheduler(threading.Thread):
                 time.sleep(self.__step_time - time_delta_sec)
             else:
                 print("Tasks takes too long :" + str(time_delta_sec))
-
-        print("WordClock Scheduler stopped...!")
-        print("Turn Off All LEDs...")
-        self.__led_strip.turn_off_all_leds()
-        self.__led_strip.show()
 
     def __process_light(self):
         light_config = self.__user_config.get_light()
@@ -97,21 +91,22 @@ class WordClockScheduler(threading.Thread):
         if self.__light_timeout_prev != light_timeout:
             self.__light_timeout_ctr = 0
 
+        self.__light_timeout_prev = light_timeout
+
         if light_config.always_on:  # Always ON state
             self.__wordclock.show_clock(True)
-        else:
-            if light_config.timeout == 0:  # Always OFF state
-                self.__wordclock.show_clock(False)
-            else:  # Based on motion detection state
-                if self.__motion.motion_detected():  # Motion detected
-                    self.__wordclock.show_clock(True)
-                    self.__light_timeout_ctr = 0
-                else:  # No motion detected
-                    self.__light_timeout_ctr += 1
+        elif light_config.timeout == 0:  # Always OFF state
+            self.__wordclock.show_clock(False)
+        else:  # Based on motion detection state
+            if self.__motion.motion_detected():  # Motion detected
+                self.__wordclock.show_clock(True)
+                self.__light_timeout_ctr = 0
+            else:  # No motion detected
+                self.__light_timeout_ctr += 1
 
-                    if self.__light_timeout_ctr >= light_timeout_ctr:
-                        self.__light_timeout_ctr = 0
-                        self.__wordclock.show_clock(False)
+                if self.__light_timeout_ctr >= light_timeout_ctr:
+                    self.__light_timeout_ctr = 0
+                    self.__wordclock.show_clock(False)
 
     def __process_brightness(self):
         brightness_config = self.__user_config.get_brightness()
