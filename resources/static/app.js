@@ -150,7 +150,19 @@ rangeBrightnessMax.oninput = function () {
     }
 }
 
+rangeBrightnessMax.ontouchmove = function(){
+    if (rangeBrightnessMax.value < 10) {
+        rangeBrightnessMax.value = 10
+    }
+}
+
 rangeBrightnessValue.oninput = function () {
+    if (rangeBrightnessValue.value < 10) {
+        rangeBrightnessValue.value = 10
+    }
+}
+
+rangeBrightnessValue.ontouchmove = function () {
     if (rangeBrightnessValue.value < 10) {
         rangeBrightnessValue.value = 10
     }
@@ -170,7 +182,15 @@ rangeBrightnessMax.onmouseup = function () {
     sendBrightnessInfo()
 }
 
+rangeBrightnessMax.ontouchend = function () {
+    sendBrightnessInfo()
+}
+
 rangeBrightnessValue.onmouseup = function () {
+    sendBrightnessInfo()
+}
+
+rangeBrightnessValue.ontouchend = function () {
     sendBrightnessInfo()
 }
 
@@ -195,6 +215,10 @@ checkLightAlwaysOn.onchange = function () {
     sendLightInfo()
 }
 rangeLightTimeout.onmouseup = function () {
+    sendLightInfo()
+}
+
+rangeLightTimeout.ontouchend = function () {
     sendLightInfo()
 }
 
