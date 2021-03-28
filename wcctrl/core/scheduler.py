@@ -180,7 +180,7 @@ class WordClockScheduler:
     def __update_rtc(self):
         try:
             response = self.__ntp_client.request('0.de.pool.ntp.org', version=3)
-            dt = datetime.fromtimestamp(response.tx_time)
+            dt = datetime.datetime.fromtimestamp(response.tx_time)
             self.__rtc.write_datetime(dt)
         except:
             logging.warning("Unable to update Real Time Clock from NTP server")
