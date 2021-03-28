@@ -83,6 +83,11 @@ class WordClock:
 
         self.__led_second = [110, 111, 112, 113, 114, 115, 116, 117, 118, 119]
 
+        # Internal variables to save the time, for internal purpose only
+        self.__hour = 0
+        self.__minute = 0
+        self.__second = 0
+
     def __set_second(self, second: int):
         second_interval = second % 10
 
@@ -160,7 +165,10 @@ class WordClock:
         if hour == 0:
             self.__led_strip.turn_on_leds(self.__led_hour_twelve, color_active)
         elif hour == 1:
-            self.__led_strip.turn_on_leds(self.__led_hour_one, color_active)
+            if self.__minute < 5:  # "EIN"
+                self.__led_strip.turn_on_leds(self.__led_hour_one, color_active)
+            else:  # "EINS"
+                self.__led_strip.turn_on_leds(self.__led_hour_ones, color_active)
         elif hour == 2:
             self.__led_strip.turn_on_leds(self.__led_hour_two, color_active)
         elif hour == 3:
@@ -195,6 +203,10 @@ class WordClock:
         :param second:
         :return:
         """
+
+        self.__hour = hour
+        self.__minute = minute
+        self.__second = second
 
         # Turn off all LEDs
         self.__led_strip.turn_off_all_leds()
