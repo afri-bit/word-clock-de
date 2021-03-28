@@ -2,6 +2,8 @@ import os
 import time
 import datetime
 import pickle
+import logging
+import ntplib
 
 from wcctrl.core.wordclock import WordClock
 from wcctrl.component.led.ws2812b import LEDStrip
@@ -39,7 +41,23 @@ class WordClockScheduler:
         self.__light_timeout_prev = self.__user_config.get_light().timeout
         self.__light_timeout_ctr = 0
 
+        # Initialize the logging format for monitoring, including timestamps
+        logging.basicConfig(
+            format='%(asctime)s %(levelname)-8s %(message)s',
+            level=logging.INFO,
+            datefmt='%Y-%m-%d %H:%M:%S')
+
+        self.__ntp_client = ntplib.NTPClient()
+
+        # RTC will be updated every 10 minutes from the ntp server
+        self.__update_time_interval = 600  # Unit in second
+        self.__update_time_counter_max = int(self.__update_time_interval / self.__step_time)
+        self.__update_time_counter = 0
+
     def run(self):
+
+        # Update the time when the application starts
+        self.__update_rtc()
 
         # While Loop in separate Thread
         while self.__running:
@@ -50,6 +68,12 @@ class WordClockScheduler:
             if os.path.getsize(shared_memory) > 0:
                 with open(shared_memory, "rb") as f:
                     self.__user_config.set_config(pickle.loads(f.read()))
+
+            if self.__update_time_counter >= self.__update_time_counter_max:
+                self.__update_rtc()
+                self.__update_time_counter = 0  # Reset the counter to zero
+            else:
+                self.__update_time_counter += 1
 
             self.__process_light()
 
@@ -72,7 +96,7 @@ class WordClockScheduler:
                 # Sleep the rest of the time
                 time.sleep(self.__step_time - time_delta_sec)
             else:
-                print("Tasks takes too long :" + str(time_delta_sec))
+                logging.warning("Tasks takes too long: "  + str(time_delta_sec))
 
     def __process_light(self):
         light_config = self.__user_config.get_light()
@@ -153,4 +177,10 @@ class WordClockScheduler:
             brightness_value = int(brightness_config.value / 100 * brightness_config.max)
             self.__led_strip.setBrightness(brightness_value)
 
-        pass
+    def __update_rtc(self):
+        try:
+            response = self.__ntp_client.request('0.de.pool.ntp.org', version=3)
+            dt = datetime.fromtimestamp(response.tx_time)
+            self.__rtc.write_datetime(dt)
+        except:
+            logging.warning("Unable to update Real Time Clock from NTP server")
