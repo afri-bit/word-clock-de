@@ -23,8 +23,7 @@ def init_shm():
         write_shm()
 
 
-if __name__ == '__main__':
-
+def main():
     # Init shared memory
     init_shm()
 
@@ -37,7 +36,8 @@ if __name__ == '__main__':
     brightness_sensor = BH1750()
     motion_sensor = RCWL0516(24)
     wordclock = WordClock(user_config, led_strip)
-    scheduler = WordClockScheduler(led_strip, wordclock, rtc, motion_sensor, brightness_sensor, user_config)
+    scheduler = WordClockScheduler(
+        led_strip, wordclock, rtc, motion_sensor, brightness_sensor, user_config)
 
     try:
         # Run Wordclock Controller
@@ -48,3 +48,8 @@ if __name__ == '__main__':
         print("Turn OFF all LEDs...")
         led_strip.turn_off_all_leds()
         led_strip.show()
+
+
+if __name__ == '__main__':
+
+    main()

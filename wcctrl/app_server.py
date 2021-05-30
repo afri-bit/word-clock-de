@@ -8,7 +8,8 @@ from flask import Flask, render_template, jsonify, request
 from wcctrl.config.user import *
 
 app_name = "Word Clock"
-app = Flask(__name__, template_folder='../resources/templates', static_folder='../resources/static')
+app = Flask(__name__, template_folder='../resources/templates',
+            static_folder='../resources/static')
 
 user_config = UserConfig()
 
@@ -78,7 +79,8 @@ def get_brightness():
 def set_color_background():
     try:
         data_dict = json.loads(request.data.decode("utf-8"))
-        user_config.set_color_background(ColorRGB(data_dict["red"], data_dict["green"], data_dict["blue"]))
+        user_config.set_color_background(
+            ColorRGB(data_dict["red"], data_dict["green"], data_dict["blue"]))
         write_shm()
     except:
         logging.error(traceback.format_exc())
@@ -91,7 +93,8 @@ def set_color_background():
 def set_color_active_letter():
     try:
         data_dict = json.loads(request.data.decode("utf-8"))
-        user_config.set_color_active_letter(ColorRGB(data_dict["red"], data_dict["green"], data_dict["blue"]))
+        user_config.set_color_active_letter(
+            ColorRGB(data_dict["red"], data_dict["green"], data_dict["blue"]))
         write_shm()
     except:
         logging.error(traceback.format_exc())
@@ -104,7 +107,8 @@ def set_color_active_letter():
 def set_color_minute():
     try:
         data_dict = json.loads(request.data.decode("utf-8"))
-        user_config.set_color_minute(ColorRGB(data_dict["red"], data_dict["green"], data_dict["blue"]))
+        user_config.set_color_minute(
+            ColorRGB(data_dict["red"], data_dict["green"], data_dict["blue"]))
         write_shm()
     except:
         logging.error(traceback.format_exc())
@@ -117,7 +121,8 @@ def set_color_minute():
 def set_color_second():
     try:
         data_dict = json.loads(request.data.decode("utf-8"))
-        user_config.set_color_second(ColorRGB(data_dict["red"], data_dict["green"], data_dict["blue"]))
+        user_config.set_color_second(
+            ColorRGB(data_dict["red"], data_dict["green"], data_dict["blue"]))
         write_shm()
     except:
         logging.error(traceback.format_exc())
@@ -130,7 +135,8 @@ def set_color_second():
 def set_color_ampm():
     try:
         data_dict = json.loads(request.data.decode("utf-8"))
-        user_config.set_color_ampm(ColorRGB(data_dict["red"], data_dict["green"], data_dict["blue"]))
+        user_config.set_color_ampm(
+            ColorRGB(data_dict["red"], data_dict["green"], data_dict["blue"]))
         write_shm()
     except:
         logging.error(traceback.format_exc())
@@ -143,7 +149,8 @@ def set_color_ampm():
 def set_light():
     try:
         data_dict = json.loads(request.data.decode("utf-8"))
-        user_config.set_light(Light(data_dict["always_on"], data_dict["timeout"]))
+        user_config.set_light(
+            Light(data_dict["always_on"], data_dict["timeout"]))
         write_shm()
     except:
         logging.error(traceback.format_exc())
@@ -156,7 +163,8 @@ def set_light():
 def set_brightness():
     try:
         data_dict = json.loads(request.data.decode("utf-8"))
-        user_config.set_brightness(Brightness(data_dict["auto"], data_dict["max"], data_dict["value"]))
+        user_config.set_brightness(Brightness(
+            data_dict["auto"], data_dict["max"], data_dict["value"]))
         write_shm()
     except:
         logging.error(traceback.format_exc())
@@ -165,9 +173,13 @@ def set_brightness():
     return jsonify({"status": True})
 
 
-if __name__ == '__main__':
+def main():
     # Initialize shared memory
     init_shm()
 
     # Run the server
     app.run(debug=True, host='192.168.1.250')
+
+
+if __name__ == '__main__':
+    main()
