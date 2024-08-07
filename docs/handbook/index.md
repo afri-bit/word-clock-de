@@ -11,6 +11,7 @@ This project requires a lot of materials, but you don't need to buy all of it in
 Some equipments / materials are optional to buy, if you already have them, for example soldering iron.
 
 So here is the list of necessary materials:
+
 * `500 x 500 x 16 mm` particle board
 * `500 x 500 x 3 mm` board (the material can be seen from the back cover of one of the IKEA's cupboard)
 * `500 x 500 x 3 mm` acryl glass
@@ -26,6 +27,7 @@ So here is the list of necessary materials:
 * Breadboard
 
 To build the project to need following equipments:
+
 * Soldering iron
 * Soldering pump - Everyone makes mistakes ;)
 * Wire stripper
@@ -34,15 +36,19 @@ To build the project to need following equipments:
 * Drill machine
 
 ### Software
+
 All the software and drivers are written in `Python` programming language.
 
 ## Hardware Build Up
 
-To build the word clock we can refer to the [technical drawing](../drawing/wordclock_layout.svg), that is created using [Inkscape](https://inkscape.org/)
+To build the word clock we can refer to the [technical drawing](../_assets/drawing/wordclock_layout.svg), that is created using [Inkscape](https://inkscape.org/)
 
-![Technical drawing](../drawing/wordclock_layout.svg)
+<div markdown="span" style="justify-content: center; display: flex">
+    ![Technical drawing](../_assets/drawing/wordclock_layout.svg)
+</div>
 
 ### 1. Drill the holes on the particle board accordingly
-![](images/particle_board.png)
+
+![](../_assets/img/particle_board.png)
 
 ### 2. 

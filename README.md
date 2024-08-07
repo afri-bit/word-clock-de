@@ -2,7 +2,7 @@
 
 **Word Clock DE** is an advanced version word clock in german language. This version of word clock is equipped with different sensor units and contains extended features such as web application to configure multiple options. The whole software is written in Python.
 
-![Word Clock DE](doc/images/word_clock.png)
+![Word Clock DE](docs/_assets/img/word_clock.png)
 
 ## Table of Content
 - [Word Clock DE](#word-clock-de)
@@ -27,7 +27,7 @@ For requirements and instruction please refer to [Handbook](doc/handbook.md).
 The **Word Clock DE** provides web application that can be accessed from different devices. The current setup of the web server is using the connection over the router. As long as your device is connected to your router, you can open the web application to configure your clock.
 
 <!-- ![Web Application](doc/images/web_app.png) -->
-<div style="text-align:center"><img src="doc/images/web_app.png" alt="drawing" width="300"/></div>
+<div style="text-align:center"><img src="docs/_assets/img/web_app.png" alt="drawing" width="300"/></div>
 
 ### Set Color
 There are multiple colors that you can set with the web application
