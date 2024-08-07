@@ -5,3 +5,4 @@ __pycache__
 .idea
 ref
 *.egg-info
+.DS_Store
