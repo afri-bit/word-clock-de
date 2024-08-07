@@ -1,7 +1,0 @@
-.vscode
-.venv
-*.pyc
-__pycache__
-.idea
-ref
-*.egg-info
