@@ -4,15 +4,6 @@ This handbook provides you information about all the necessary details and steps
 
 To build this word clock you do not need as much money as the price from the real provider, all you need is maybe a few bucks and your passion. And last but not least, make sure you enjoy the process and have fun with it.
 
-## Table of Content
-- [Handbook](#handbook)
-  - [Table of Content](#table-of-content)
-  - [Requirements](#requirements)
-    - [Hardware](#hardware)
-    - [Software](#software)
-  - [Hardware Build Up](#hardware-build-up)
-    - [1. Drill the holes on the particle board accordingly](#1-drill-the-holes-on-the-particle-board-accordingly)
-    - [2.](#2)
 ## Requirements
 
 ### Hardware
