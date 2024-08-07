@@ -10,15 +10,15 @@ repo_name: afri-bit/world-clock-de
 repo_url: https://github.com/afri-bit/word-clock-de
 
 # Copyright
-copyright: Copyright &copy; 2021 - present afri-bit
+copyright: Copyright &copy; 2021 - present, afri-bit
 
 # Configuration
 theme:
   name: material
   features:
     - announce.dismiss
-    - content.action.edit
-    - content.action.view
+    # - content.action.edit
+    # - content.action.view
     - content.code.annotate
     - content.code.copy
     # - content.code.select
