@@ -1,0 +1,10 @@
+
+services:
+  wordclock:
+    image: golang:1.22
+    build:  
+      context: .
+    container_name: wordclock
+    volumes:
+      - ./:/root/wordclock
+    platform: linux/amd64

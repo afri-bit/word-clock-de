@@ -9,3 +9,5 @@ ref
 
 # Rust things
 target/
+
+.scratch/
