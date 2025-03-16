@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "wordclock-controller"
+version = "1.1.0"
+description = "Advanced german word clock controller"
+authors = ["afri-bit <afribit.tech@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "wcctrl", from = "src" }]
+
+[tool.poetry.dependencies]
+python = ">=3.6"
+ntplib = "0.3.4"
+rpi-ws281x = "4.2.6"
+"RPi.GPIO" = "^0.7.0"
+smbus2 = "^0.4.1"
+gpiozero = "^1.5.1"
+
+# [tool.poetry.dev-dependencies]
+# black = "^24.2.0"
+# flake8 = "^7.0.0"
+# mypy = "^1.8.0"
+
+[tool.poetry.scripts]
+wcctrl="wcctrl.app_controller:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
