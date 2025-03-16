@@ -12,3 +12,5 @@ class SystemConfig:
     # True to invert the signal (when using NPN transistor level shift)
     LED_INVERT = False
     LED_CHANNEL = 0  # set to '1' for GPIOs 13, 19, 41, 45 or 53
+
+    SHARED_MEMORY = "/dev/shm/wc_shm"

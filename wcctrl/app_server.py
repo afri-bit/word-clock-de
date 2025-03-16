@@ -2,6 +2,7 @@ import os
 import logging
 import traceback
 import pickle
+import socket
 
 from flask import Flask, render_template, jsonify, request
 
@@ -173,12 +174,31 @@ def set_brightness():
     return jsonify({"status": True})
 
 
+def get_local_ip() -> str:
+    """
+    Detects the local IP address of the Pi (e.g., 192.168.1.x).
+    """
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # Doesn't have to be reachable — used to pick the correct interface
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        raise Exception("Failed to get local IP address.")
+
+
 def main():
     # Initialize shared memory
     init_shm()
 
+    # Get the IP dynamically
+    ip = get_local_ip()
+    print(f"Serving Flask on {ip}:5000")
+
     # Run the server
-    app.run(debug=True, host='192.168.1.250')
+    app.run(debug=True, host=ip)
 
 
 if __name__ == '__main__':

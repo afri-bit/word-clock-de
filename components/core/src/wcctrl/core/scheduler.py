@@ -11,6 +11,9 @@ from wcctrl.component.rtc.ds1302 import DS1302
 from wcctrl.component.sensor.motion.rcwl0516 import RCWL0516
 from wcctrl.component.sensor.brightness.bh1750 import BH1750
 from wcctrl.config.user import UserConfig
+from wcctrl.utils.logger import get_logger
+
+logger = get_logger(__name__)
 
 
 class WordClockScheduler:
@@ -19,8 +22,15 @@ class WordClockScheduler:
     regularly for the stopped() condition.
     """
 
-    def __init__(self, led_strip: LEDStrip, wordclock: WordClock, rtc: DS1302, motion: RCWL0516, brightness: BH1750,
-                 user_config: UserConfig):
+    def __init__(
+        self,
+        led_strip: LEDStrip,
+        wordclock: WordClock,
+        rtc: DS1302,
+        motion: RCWL0516,
+        brightness: BH1750,
+        user_config: UserConfig,
+    ):
         self.__running = True
 
         self.__led_strip = led_strip
@@ -40,12 +50,6 @@ class WordClockScheduler:
         self.__light_always_on_prev = self.__user_config.get_light().always_on
         self.__light_timeout_prev = self.__user_config.get_light().timeout
         self.__light_timeout_ctr = 0
-
-        # Initialize the logging format for monitoring, including timestamps
-        logging.basicConfig(
-            format='%(asctime)s %(levelname)-8s %(message)s',
-            level=logging.INFO,
-            datefmt='%Y-%m-%d %H:%M:%S')
 
         self.__ntp_client = ntplib.NTPClient()
 
@@ -96,7 +100,7 @@ class WordClockScheduler:
                 # Sleep the rest of the time
                 time.sleep(self.__step_time - time_delta_sec)
             else:
-                logging.warning("Tasks takes too long: "  + str(time_delta_sec))
+                logging.warning("Tasks takes too long: " + str(time_delta_sec))
 
     def __process_light(self):
         light_config = self.__user_config.get_light()
@@ -179,8 +183,8 @@ class WordClockScheduler:
 
     def __update_rtc(self):
         try:
-            response = self.__ntp_client.request('0.de.pool.ntp.org', version=3)
+            response = self.__ntp_client.request("0.de.pool.ntp.org", version=3)
             dt = datetime.datetime.fromtimestamp(response.tx_time)
             self.__rtc.write_datetime(dt)
         except:
-            logging.warning("Unable to update Real Time Clock from NTP server")
+            logger.warning("Unable to update Real Time Clock from NTP server")

@@ -1,5 +1,5 @@
 from wcctrl.type.color import ColorRGB
-from neopixel import *
+from neopixel import Adafruit_NeoPixel, Color
 
 
 class LEDStrip(Adafruit_NeoPixel):
